@@ -10,6 +10,8 @@ namespace StatesCapitalsQuiz
             InitializeComponent();
         }
 
+        int loginAttempts = 0;
+
         private void LoginForm_Load(object sender, EventArgs e)
         {
 
@@ -37,7 +39,7 @@ namespace StatesCapitalsQuiz
                 adapt.Fill(ds);
                 conn.Close();
                 int count = ds.Tables[0].Rows.Count;
-                //If count is equal to 1, than show frmMain form
+                //If count is equal to 1, than show quiz form
                 if (count == 1)
                 {
                     username = txt_username.Text.Trim();
@@ -50,11 +52,22 @@ namespace StatesCapitalsQuiz
                 }
                 else
                 {
-                    MessageBox.Show("Invalid Login", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    loginAttempts++;
+                    string inalidLoginMsg = loginAttempts > 2 ? "You have attempted to login too many times. Quiz will now close." : "Incorrect Username or Password";
+                    
+                    MessageBox.Show(inalidLoginMsg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     txt_username.Clear();
                     txt_password.Clear();
 
                     txt_username.Focus();
+
+                    if (loginAttempts > 2)
+                    {
+                        var timer = new System.Windows.Forms.Timer();
+                        timer.Tick += new EventHandler(CloseTimer_Tick);
+                        timer.Interval = 1000;
+                        timer.Start();
+                    }
                 }
             }
             catch
@@ -76,6 +89,10 @@ namespace StatesCapitalsQuiz
             {
                 Close();
             }
+        }
+        private void CloseTimer_Tick(object sender, EventArgs e)
+        {
+            Close();
         }
     }
 }
