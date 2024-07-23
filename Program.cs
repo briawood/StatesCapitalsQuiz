@@ -13,5 +13,9 @@ namespace StatesCapitalsQuiz
             ApplicationConfiguration.Initialize();
             Application.Run(new LoginForm());
         }
+        public static class LoginInfo
+        {
+            public static string UserID;
+        }
     }
 }

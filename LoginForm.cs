@@ -1,5 +1,6 @@
 using System.Data;
 using System.Data.SqlClient;
+using static StatesCapitalsQuiz.Program;
 
 namespace StatesCapitalsQuiz
 {
@@ -42,8 +43,8 @@ namespace StatesCapitalsQuiz
                 //If count is equal to 1, than show quiz form
                 if (count == 1)
                 {
-                    username = txt_username.Text.Trim();
-                    user_password = txt_password.Text.Trim();
+                    //save UserId to session
+                    LoginInfo.UserID = ds.Tables[0].Rows[0]["UserId"].ToString();
 
                     //Load quiz
                     QuizForm quizForm = new QuizForm();
@@ -52,22 +53,22 @@ namespace StatesCapitalsQuiz
                 }
                 else
                 {
-                    loginAttempts++;
-                    string inalidLoginMsg = loginAttempts > 2 ? "You have attempted to login too many times. Quiz will now close." : "Incorrect Username or Password";
-                    
-                    MessageBox.Show(inalidLoginMsg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    txt_username.Clear();
-                    txt_password.Clear();
-
-                    txt_username.Focus();
-
-                    if (loginAttempts > 2)
+                    if (loginAttempts > 1)
                     {
-                        var timer = new System.Windows.Forms.Timer();
+                        MessageBox.Show("You have attempted to login too many times. Quiz will now close.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error); var timer = new System.Windows.Forms.Timer();
                         timer.Tick += new EventHandler(CloseTimer_Tick);
                         timer.Interval = 1000;
                         timer.Start();
                     }
+                    else
+                    {
+                        MessageBox.Show("Incorrect Username or Password", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        txt_username.Clear();
+                        txt_password.Clear();
+
+                        txt_username.Focus();
+                    }
+                    loginAttempts++;
                 }
             }
             catch
